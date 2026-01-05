@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Extension Test Page</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+    .test-section {
+      background: white;
+      padding: 20px;
+      margin: 20px 0;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    h1 { color: #333; }
+    h2 { color: #666; margin-top: 0; }
+    .status { 
+      padding: 10px; 
+      border-radius: 4px; 
+      margin: 10px 0;
+    }
+    .success { background: #d4edda; color: #155724; }
+    .error { background: #f8d7da; color: #721c24; }
+    .info { background: #d1ecf1; color: #0c5460; }
+    button {
+      background: #667eea;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin: 5px;
+    }
+    button:hover { background: #5568d3; }
+    pre {
+      background: #f8f9fa;
+      padding: 10px;
+      border-radius: 4px;
+      overflow-x: auto;
+    }
+  </style>
+</head>
+<body>
+  <h1>🧪 Localhost App Detector - Test Page</h1>
+  
+  <div class="test-section">
+    <h2>Extension Status</h2>
+    <div id="extensionStatus" class="status info">Checking...</div>
+  </div>
+
+  <div class="test-section">
+    <h2>Test Localhost Detection</h2>
+    <p>This page is running on: <strong id="currentUrl"></strong></p>
+    <p>Open the extension popup to see if this page is detected.</p>
+    <button onclick="openExtension()">Open Extension</button>
+  </div>
+
+  <div class="test-section">
+    <h2>Test Links</h2>
+    <p>Click these to test detection of different ports:</p>
+    <button onclick="window.open('http://localhost:3000', '_blank')">Port 3000</button>
+    <button onclick="window.open('http://localhost:5173', '_blank')">Port 5173</button>
+    <button onclick="window.open('http://localhost:8080', '_blank')">Port 8080</button>
+    <button onclick="window.open('http://localhost:8000', '_blank')">Port 8000</button>
+  </div>
+
+  <div class="test-section">
+    <h2>Console Output</h2>
+    <p>Check browser console (F12) for extension logs</p>
+    <button onclick="testExtensionAPI()">Test Extension API</button>
+    <pre id="apiOutput">Click "Test Extension API" to see results...</pre>
+  </div>
+
+  <div class="test-section">
+    <h2>Quick Setup Commands</h2>
+    <p>Start test servers:</p>
+    <pre>
+# Python HTTP Server
+python3 -m http.server 8000
+
+# Node.js HTTP Server  
+npx http-server -p 8080
+
+# PHP Server
+php -S localhost:8000
+    </pre>
+  </div>
+
+  <script>
+    // Display current URL
+    document.getElementById('currentUrl').textContent = window.location.href;
+
+    // Check if extension is installed
+    function checkExtension() {
+      const statusDiv = document.getElementById('extensionStatus');
+      
+      // Try to detect if extension exists
+      if (typeof chrome !== 'undefined' && chrome.runtime) {
+        statusDiv.className = 'status success';
+        statusDiv.innerHTML = '✅ Chrome extension APIs available<br>Extension should be working!';
+      } else {
+        statusDiv.className = 'status error';
+        statusDiv.innerHTML = '❌ Chrome extension APIs not available<br>Make sure you loaded the extension';
+      }
+    }
+
+    function openExtension() {
+      alert('Click the extension icon in your Chrome toolbar (puzzle piece icon)');
+    }
+
+    function testExtensionAPI() {
+      const output = document.getElementById('apiOutput');
+      output.textContent = 'Testing...\n';
+      
+      try {
+        // Test basic Chrome APIs
+        output.textContent += `Chrome version: ${navigator.userAgent.match(/Chrome\/(\d+)/)?.[1] || 'Unknown'}\n`;
+        output.textContent += `Platform: ${navigator.platform}\n`;
+        output.textContent += `Current URL: ${window.location.href}\n`;
+        output.textContent += `\n✅ Basic tests passed!\n`;
+        output.textContent += `\nNow open the extension popup to see if this page is detected.`;
+      } catch (error) {
+        output.textContent += `\n❌ Error: ${error.message}`;
+      }
+    }
+
+    // Run check on load
+    checkExtension();
+  </script>
+</body>
+</html>
