@@ -4,49 +4,144 @@ A developer-focused Chrome extension that automatically detects and lists all ru
 
 ![Extension Preview](preview.png)
 
-## 🌟 Key Features
+---
 
-### Localhost Detection
-- **Automatic Detection**: Monitors all localhost connections in your browser
-- **Common Port Scanning**: Tracks popular development ports (React, Vue, Angular, Flask, Django, etc.)
-- **Real-time Updates**: See which apps are currently active
-- **One-Click Access**: Click any detected app to open it in a new tab
+## 📋 Complete Feature List
 
-### 🔍 Port Scanner (NEW!)
-- **Quick Scan**: Scan ~100 common development ports in seconds
-- **Deep Scan**: Comprehensive scan of 400+ ports including databases, message queues, and monitoring tools
-- **All Port Ranges**: 3000-9999 development ports, databases, APIs, and more
-- **Real-time Progress**: Visual feedback during scanning
-- **Export Results**: Save scan results for documentation
+### 🔍 Automatic Localhost Detection
+| Feature | Description |
+|---------|-------------|
+| **Real-time Monitoring** | Automatically detects when you visit any localhost or 127.0.0.1 URL |
+| **Multi-protocol Support** | Tracks both HTTP and HTTPS localhost connections |
+| **Port Tracking** | Records and displays all unique ports you've accessed |
+| **Last Seen Timestamps** | Shows when each app was last accessed |
+| **Auto-expiration** | Apps automatically expire after 5 minutes of inactivity |
+| **One-click Access** | Click any detected app to open it in a new browser tab |
+| **Quick Port Chips** | Launch common development ports (3000, 5173, 8080, 4200, 8000) with one click |
 
-### 💾 Saved Apps & Persistence (NEW!)
-- **Save Frequently-Used Apps**: Persistent storage that works across sessions
-- **Incognito Mode Support**: Access saved apps even in private browsing
-- **Tags & Organization**: Categorize apps with custom tags
-- **Favorites**: Star your most-used applications
-- **Search & Filter**: Quick search across all saved apps
-- **Import/Export**: Share app configurations with your team
-- **Usage Tracking**: See most accessed and recently added apps
+### 🔎 Port Scanner
+| Feature | Description |
+|---------|-------------|
+| **Quick Scan Mode** | Scans ~100 common development ports in 3-5 seconds |
+| **Deep Scan Mode** | Comprehensive scan of 400+ ports across all categories |
+| **Custom Host Scanning** | Scan localhost or any custom hostname |
+| **Real-time Progress Bar** | Visual feedback showing scan progress percentage |
+| **Categorized Results** | Ports organized by type (web servers, databases, dev servers, etc.) |
+| **Response Time Display** | Shows how quickly each port responds |
+| **Open from Results** | Click any found port to open it in browser |
+| **Clear Results** | One-click clear to start fresh scans |
 
-### 🌐 Custom Hosts Management (NEW!)
-- **Custom Hostname Mappings**: Add custom hosts like `/etc/hosts`
-- **Import Hosts File**: Paste content from your system hosts file
-- **Export Configuration**: Generate hosts file format for sharing
-- **Team Collaboration**: Share custom host setups with your team
+**Port Categories Scanned:**
+- Web Servers: 80, 443, 8000, 8008, 8080, 8081, 8082, 8083, 8443, 8888, 9000, 9080, 9090
+- Development Servers: 3000-3009, 4000-4003, 4200-4201, 5000-5003, 5173-5175
+- Databases: 3306 (MySQL), 5432 (PostgreSQL), 27017 (MongoDB), 6379 (Redis), 9200 (Elasticsearch)
+- Message Queues: 5672, 15672 (RabbitMQ), 9092 (Kafka)
+- Monitoring: 9090 (Prometheus), 5601 (Kibana), 3001 (Grafana)
+- Container Orchestration: 2375, 2376, 6443, 10250
 
-### 🐳 Docker Integration
-- **Container Monitoring**: Automatically detects all running Docker containers with exposed web ports
-- **Framework Recognition**: Identifies 20+ frameworks from container images (Node, React, Nginx, MySQL, etc.)
-- **Port Mapping Display**: Shows both public and private port configurations
-- **Visual Distinction**: Docker containers are highlighted with distinctive styling and icons
-- **Real-time Sync**: Updates every 5 seconds to reflect current container state
-- **Toggle Control**: Enable/disable Docker detection independently
+### 💾 Saved Apps Manager
+| Feature | Description |
+|---------|-------------|
+| **Persistent Storage** | Saved apps persist across browser sessions using Chrome sync storage |
+| **Incognito Support** | Access your saved apps even in private browsing mode |
+| **Custom Naming** | Give your saved apps memorable names |
+| **Tags System** | Add custom tags to categorize and organize apps |
+| **Favorites** | Star frequently-used apps for quick access |
+| **Notes** | Add notes and descriptions to any saved app |
+| **Search & Filter** | Quickly find apps by name, port, tags, or notes |
+| **Usage Tracking** | Track access count and last accessed time for each app |
+| **Import Configuration** | Import saved apps from JSON file |
+| **Export Configuration** | Export all saved apps to share with team members |
+| **Duplicate Prevention** | Automatically prevents saving duplicate entries |
 
-### General Features
-- **Auto-Cleanup**: Apps/containers automatically expire after 5 minutes of inactivity
-- **Beautiful UI**: Modern, gradient-styled interface with smooth animations
-- **Tabbed Interface**: Organized views for Detected, Saved, Scanner, and Hosts
-- **Statistics Dashboard**: Track your development patterns
+### 🌐 Custom Hosts Management
+| Feature | Description |
+|---------|-------------|
+| **Custom Hostname Mappings** | Add custom host entries similar to /etc/hosts |
+| **Hosts File Import** | Paste content directly from your system hosts file |
+| **Configuration Export** | Generate hosts file format for sharing or backup |
+| **Team Collaboration** | Share custom host configurations with your team |
+
+### 🐳 Docker Container Integration
+| Feature | Description |
+|---------|-------------|
+| **Automatic Detection** | Detects all running Docker containers with exposed web ports |
+| **Real-time Sync** | Updates container list every 5 seconds |
+| **Container Details** | View container name, image, state, and ID |
+| **Port Mapping Display** | Shows public → private port mappings |
+| **Framework Recognition** | Identifies 20+ frameworks from container images |
+| **Container Actions** | Start, stop, pause, and unpause containers |
+| **Container Logs** | View real-time container logs |
+| **Toggle Control** | Enable/disable Docker detection independently |
+| **Connection Status** | Shows Docker daemon connection status |
+| **Container Count** | Badge showing number of running containers |
+
+**Recognized Docker Images:**
+| Image | Display |
+|-------|---------|
+| node | 🟢 Node.js |
+| nginx | 🌐 Nginx |
+| apache | 🪶 Apache |
+| python | 🐍 Python |
+| php | 🐘 PHP |
+| react | ⚛️ React |
+| angular | 🅰️ Angular |
+| vue | 💚 Vue |
+| mysql | 🐬 MySQL |
+| postgres | 🐘 PostgreSQL |
+| mongodb | 🍃 MongoDB |
+| redis | 🔴 Redis |
+| elasticsearch | 🔍 Elasticsearch |
+| rabbitmq | 🐰 RabbitMQ |
+| jenkins | 🤵 Jenkins |
+| grafana | 📊 Grafana |
+| prometheus | 🔥 Prometheus |
+| traefik | 🚦 Traefik |
+| caddy | 🎾 Caddy |
+| golang | 🐹 Go |
+
+### 🎨 User Interface
+| Feature | Description |
+|---------|-------------|
+| **Modern Design** | Clean, gradient-styled interface with smooth animations |
+| **Tabbed Navigation** | Organized tabs for Detected, Saved, and Scanner views |
+| **Responsive Layout** | Adapts to different popup sizes |
+| **Visual Badges** | Tab badges show counts for detected and saved apps |
+| **Loading States** | Spinner and progress indicators for async operations |
+| **Empty States** | Helpful guidance when no apps are detected |
+| **Icon Buttons** | Intuitive icons for Docker toggle, refresh, and settings |
+| **Color Coding** | Visual distinction between localhost apps and Docker containers |
+| **Framework Icons** | Display framework-specific icons and colors |
+
+### ⚙️ Settings & Configuration
+| Feature | Description |
+|---------|-------------|
+| **Docker Toggle** | Enable/disable Docker detection without reloading |
+| **Settings Persistence** | All preferences saved across sessions |
+| **Refresh Button** | Manually trigger app/container refresh |
+| **Export Link** | Quick access to export functionality in footer |
+| **Help Link** | Direct link to documentation and support |
+
+### 🔐 Privacy & Security
+| Feature | Description |
+|---------|-------------|
+| **Local Only** | Only monitors localhost and 127.0.0.1 traffic |
+| **No External Tracking** | Zero data sent to external servers |
+| **Minimal Permissions** | Only requests necessary Chrome permissions |
+| **Auto Data Cleanup** | Old entries automatically expire |
+| **Local Storage** | All data stored locally in Chrome |
+
+### 🧩 Chrome Extension Features
+| Feature | Description |
+|---------|-------------|
+| **Manifest V3** | Built with the latest Chrome extension architecture |
+| **Service Worker** | Background service worker for request monitoring |
+| **Chrome Storage API** | Uses both sync and local storage appropriately |
+| **WebRequest API** | Efficient network request monitoring |
+| **Popup Interface** | Quick access from browser toolbar |
+| **Multiple Icon Sizes** | Icons for 16px, 48px, and 128px displays |
+
+---
 
 ## Supported Development Ports
 
