@@ -10,78 +10,123 @@ class PortScanner {
     // Known port database - maps ports to their typical services
     this.knownPorts = {
       // Web servers
-      80: { name: 'HTTP', category: 'web', icon: '🌐' },
-      443: { name: 'HTTPS', category: 'web', icon: '🔒' },
+      80: { name: 'HTTP Server', category: 'web', icon: '🌐' },
+      443: { name: 'HTTPS Server', category: 'web', icon: '🔒' },
       8080: { name: 'HTTP Alt / Tomcat', category: 'web', icon: '🌐' },
       8443: { name: 'HTTPS Alt', category: 'web', icon: '🔒' },
       
-      // Frontend frameworks
-      3000: { name: 'React / Next.js / Node', category: 'frontend', icon: '⚛️' },
-      3001: { name: 'React (alt) / Grafana', category: 'frontend', icon: '⚛️' },
-      3002: { name: 'React (alt)', category: 'frontend', icon: '⚛️' },
-      3003: { name: 'React (alt)', category: 'frontend', icon: '⚛️' },
-      4200: { name: 'Angular', category: 'frontend', icon: '🅰️' },
-      4201: { name: 'Angular (alt)', category: 'frontend', icon: '🅰️' },
-      5173: { name: 'Vite', category: 'frontend', icon: '⚡' },
-      5174: { name: 'Vite (alt)', category: 'frontend', icon: '⚡' },
-      5175: { name: 'Vite (alt)', category: 'frontend', icon: '⚡' },
-      8000: { name: 'Django / Python HTTP', category: 'backend', icon: '🐍' },
-      8001: { name: 'Django (alt)', category: 'backend', icon: '🐍' },
-      5000: { name: 'Flask / Python', category: 'backend', icon: '🐍' },
-      5001: { name: 'Flask (alt)', category: 'backend', icon: '🐍' },
-      4000: { name: 'Jekyll / Phoenix', category: 'static', icon: '📄' },
-      1313: { name: 'Hugo', category: 'static', icon: '📄' },
-      6006: { name: 'Storybook', category: 'frontend', icon: '📚' },
-      8888: { name: 'Jupyter Notebook', category: 'dev', icon: '📓' },
-      24678: { name: 'Webpack Dev Server', category: 'frontend', icon: '📦' },
-      9000: { name: 'PHP / SonarQube', category: 'backend', icon: '🐘' },
+      // Frontend frameworks - React ecosystem
+      3000: { name: 'React / Next.js', category: 'frontend', icon: '⚛️', framework: 'React' },
+      3001: { name: 'React Dev Server', category: 'frontend', icon: '⚛️', framework: 'React' },
+      3002: { name: 'React Dev Server', category: 'frontend', icon: '⚛️', framework: 'React' },
+      3003: { name: 'React Dev Server', category: 'frontend', icon: '⚛️', framework: 'React' },
       
-      // Backend/API
-      3030: { name: 'Express / Node API', category: 'backend', icon: '🟢' },
-      4001: { name: 'Node / API Server', category: 'backend', icon: '🟢' },
-      5002: { name: 'Python API', category: 'backend', icon: '🐍' },
-      8081: { name: 'Node / API Alt', category: 'backend', icon: '🟢' },
+      // Angular
+      4200: { name: 'Angular CLI', category: 'frontend', icon: '🅰️', framework: 'Angular' },
+      4201: { name: 'Angular CLI', category: 'frontend', icon: '🅰️', framework: 'Angular' },
+      4202: { name: 'Angular CLI', category: 'frontend', icon: '🅰️', framework: 'Angular' },
+      
+      // Vite
+      5173: { name: 'Vite Dev Server', category: 'frontend', icon: '⚡', framework: 'Vite' },
+      5174: { name: 'Vite Dev Server', category: 'frontend', icon: '⚡', framework: 'Vite' },
+      5175: { name: 'Vite Dev Server', category: 'frontend', icon: '⚡', framework: 'Vite' },
+      5176: { name: 'Vite Dev Server', category: 'frontend', icon: '⚡', framework: 'Vite' },
+      
+      // Vue
+      8080: { name: 'Vue CLI', category: 'frontend', icon: '💚', framework: 'Vue' },
+      
+      // Svelte
+      5000: { name: 'Svelte / Flask', category: 'frontend', icon: '🧡', framework: 'Svelte' },
+      5001: { name: 'Svelte / Flask', category: 'frontend', icon: '🧡' },
+      
+      // Python backends
+      8000: { name: 'Django / FastAPI', category: 'backend', icon: '🐍', framework: 'Python' },
+      8001: { name: 'Django / Uvicorn', category: 'backend', icon: '🐍', framework: 'Python' },
+      8002: { name: 'Python Server', category: 'backend', icon: '🐍', framework: 'Python' },
+      5002: { name: 'Flask API', category: 'backend', icon: '🐍', framework: 'Flask' },
+      5003: { name: 'Flask API', category: 'backend', icon: '🐍', framework: 'Flask' },
+      
+      // Node.js backends
+      3030: { name: 'Express / Feathers', category: 'backend', icon: '🟢', framework: 'Express' },
+      4000: { name: 'Express / Apollo', category: 'backend', icon: '🟢', framework: 'Node.js' },
+      4001: { name: 'Node.js Server', category: 'backend', icon: '🟢', framework: 'Node.js' },
+      4002: { name: 'Node.js Server', category: 'backend', icon: '🟢', framework: 'Node.js' },
+      8081: { name: 'Node.js API', category: 'backend', icon: '🟢', framework: 'Node.js' },
       8082: { name: 'API Server', category: 'backend', icon: '🔌' },
       8083: { name: 'API Server', category: 'backend', icon: '🔌' },
-      9001: { name: 'API / Supervisor', category: 'backend', icon: '🔌' },
-      9090: { name: 'Prometheus / API', category: 'monitoring', icon: '🔥' },
+      9000: { name: 'PHP-FPM / Node', category: 'backend', icon: '🐘' },
+      9001: { name: 'Supervisor / Node', category: 'backend', icon: '🔌' },
+      
+      // Static site generators
+      1313: { name: 'Hugo', category: 'static', icon: '📄', framework: 'Hugo' },
+      4000: { name: 'Jekyll / Gatsby', category: 'static', icon: '📄', framework: 'Jekyll' },
+      
+      // Dev tools
+      6006: { name: 'Storybook', category: 'dev', icon: '📚', framework: 'Storybook' },
+      6007: { name: 'Storybook', category: 'dev', icon: '📚', framework: 'Storybook' },
+      8888: { name: 'Jupyter Notebook', category: 'dev', icon: '📓', framework: 'Jupyter' },
+      8889: { name: 'Jupyter Lab', category: 'dev', icon: '📓', framework: 'Jupyter' },
+      24678: { name: 'Vite HMR', category: 'dev', icon: '⚡', framework: 'Vite' },
+      35729: { name: 'LiveReload', category: 'dev', icon: '🔄' },
       
       // Databases
-      3306: { name: 'MySQL', category: 'database', icon: '🐬' },
-      5432: { name: 'PostgreSQL', category: 'database', icon: '🐘' },
-      27017: { name: 'MongoDB', category: 'database', icon: '🍃' },
-      6379: { name: 'Redis', category: 'database', icon: '🔴' },
-      9200: { name: 'Elasticsearch', category: 'database', icon: '🔍' },
-      9300: { name: 'Elasticsearch (nodes)', category: 'database', icon: '🔍' },
-      5984: { name: 'CouchDB', category: 'database', icon: '🛋️' },
-      7474: { name: 'Neo4j', category: 'database', icon: '🔗' },
-      8529: { name: 'ArangoDB', category: 'database', icon: '🥑' },
+      3306: { name: 'MySQL', category: 'database', icon: '🐬', framework: 'MySQL' },
+      5432: { name: 'PostgreSQL', category: 'database', icon: '🐘', framework: 'PostgreSQL' },
+      27017: { name: 'MongoDB', category: 'database', icon: '🍃', framework: 'MongoDB' },
+      27018: { name: 'MongoDB', category: 'database', icon: '🍃', framework: 'MongoDB' },
+      6379: { name: 'Redis', category: 'database', icon: '🔴', framework: 'Redis' },
+      6380: { name: 'Redis', category: 'database', icon: '🔴', framework: 'Redis' },
+      9200: { name: 'Elasticsearch', category: 'database', icon: '🔍', framework: 'Elasticsearch' },
+      9300: { name: 'Elasticsearch', category: 'database', icon: '🔍', framework: 'Elasticsearch' },
+      5984: { name: 'CouchDB', category: 'database', icon: '🛋️', framework: 'CouchDB' },
+      7474: { name: 'Neo4j Browser', category: 'database', icon: '🔗', framework: 'Neo4j' },
+      7687: { name: 'Neo4j Bolt', category: 'database', icon: '🔗', framework: 'Neo4j' },
+      8529: { name: 'ArangoDB', category: 'database', icon: '🥑', framework: 'ArangoDB' },
       
       // Message queues
-      5672: { name: 'RabbitMQ (AMQP)', category: 'queue', icon: '🐰' },
-      15672: { name: 'RabbitMQ (Web UI)', category: 'queue', icon: '🐰' },
-      9092: { name: 'Kafka', category: 'queue', icon: '📨' },
-      61616: { name: 'ActiveMQ', category: 'queue', icon: '📬' },
+      5672: { name: 'RabbitMQ', category: 'queue', icon: '🐰', framework: 'RabbitMQ' },
+      15672: { name: 'RabbitMQ UI', category: 'queue', icon: '🐰', framework: 'RabbitMQ' },
+      9092: { name: 'Kafka', category: 'queue', icon: '📨', framework: 'Kafka' },
+      61616: { name: 'ActiveMQ', category: 'queue', icon: '📬', framework: 'ActiveMQ' },
+      4222: { name: 'NATS', category: 'queue', icon: '📨', framework: 'NATS' },
       
       // Monitoring / Admin
-      5601: { name: 'Kibana', category: 'monitoring', icon: '📊' },
-      9091: { name: 'Prometheus Pushgateway', category: 'monitoring', icon: '🔥' },
-      16686: { name: 'Jaeger', category: 'monitoring', icon: '🔎' },
+      3001: { name: 'Grafana', category: 'monitoring', icon: '📊', framework: 'Grafana' },
+      5601: { name: 'Kibana', category: 'monitoring', icon: '📊', framework: 'Kibana' },
+      9090: { name: 'Prometheus', category: 'monitoring', icon: '🔥', framework: 'Prometheus' },
+      9091: { name: 'Prometheus Push', category: 'monitoring', icon: '🔥', framework: 'Prometheus' },
+      16686: { name: 'Jaeger UI', category: 'monitoring', icon: '🔎', framework: 'Jaeger' },
+      9411: { name: 'Zipkin', category: 'monitoring', icon: '🔎', framework: 'Zipkin' },
+      8086: { name: 'InfluxDB', category: 'monitoring', icon: '📈', framework: 'InfluxDB' },
       
       // Container / Orchestration
-      2375: { name: 'Docker API', category: 'container', icon: '🐳' },
-      2376: { name: 'Docker API (TLS)', category: 'container', icon: '🐳' },
-      6443: { name: 'Kubernetes API', category: 'container', icon: '☸️' },
-      10250: { name: 'Kubelet', category: 'container', icon: '☸️' },
+      2375: { name: 'Docker API', category: 'container', icon: '🐳', framework: 'Docker' },
+      2376: { name: 'Docker TLS', category: 'container', icon: '🐳', framework: 'Docker' },
+      6443: { name: 'Kubernetes API', category: 'container', icon: '☸️', framework: 'Kubernetes' },
+      10250: { name: 'Kubelet', category: 'container', icon: '☸️', framework: 'Kubernetes' },
+      8001: { name: 'kubectl proxy', category: 'container', icon: '☸️', framework: 'Kubernetes' },
+      
+      // Email testing
+      1025: { name: 'Mailhog SMTP', category: 'mail', icon: '📧', framework: 'Mailhog' },
+      8025: { name: 'Mailhog UI', category: 'mail', icon: '📧', framework: 'Mailhog' },
+      1080: { name: 'MailCatcher', category: 'mail', icon: '📧', framework: 'MailCatcher' },
       
       // Other common
-      22: { name: 'SSH', category: 'system', icon: '🔐' },
-      21: { name: 'FTP', category: 'system', icon: '📁' },
-      25: { name: 'SMTP', category: 'mail', icon: '📧' },
-      587: { name: 'SMTP (submission)', category: 'mail', icon: '📧' },
-      1025: { name: 'Mailhog / MailCatcher', category: 'mail', icon: '📧' },
-      8025: { name: 'Mailhog Web UI', category: 'mail', icon: '📧' },
-      11211: { name: 'Memcached', category: 'cache', icon: '💾' },
+      11211: { name: 'Memcached', category: 'cache', icon: '💾', framework: 'Memcached' },
+      6081: { name: 'Varnish', category: 'cache', icon: '💾', framework: 'Varnish' },
+      9229: { name: 'Node Inspector', category: 'dev', icon: '🔍' },
+      9222: { name: 'Chrome DevTools', category: 'dev', icon: '🔍' },
+      
+      // CMS / Admin panels
+      1337: { name: 'Strapi', category: 'backend', icon: '🚀', framework: 'Strapi' },
+      2368: { name: 'Ghost CMS', category: 'backend', icon: '👻', framework: 'Ghost' },
+      3333: { name: 'AdonisJS', category: 'backend', icon: '🟣', framework: 'AdonisJS' },
+      8055: { name: 'Directus', category: 'backend', icon: '🐰', framework: 'Directus' },
+      
+      // Misc dev servers
+      4321: { name: 'Astro', category: 'frontend', icon: '🚀', framework: 'Astro' },
+      3005: { name: 'Remix', category: 'frontend', icon: '💿', framework: 'Remix' },
+      5555: { name: 'Prisma Studio', category: 'dev', icon: '🔷', framework: 'Prisma' },
     };
     
     // Comprehensive port list
@@ -251,10 +296,10 @@ class PortScanner {
       name: knownService?.name || `Port ${port}`,
       category: knownService?.category || 'unknown',
       icon: knownService?.icon || '🔌',
-      framework: null,
+      framework: knownService?.framework || null,
       title: null,
       server: null,
-      verified: false
+      verified: !!knownService // Mark as verified if we know this port
     };
 
     try {
@@ -262,13 +307,16 @@ class PortScanner {
       const timeoutId = setTimeout(() => controller.abort(), timeout);
 
       // Try to fetch the page to get more details
+      // Note: This may fail due to CORS, but we try anyway
       const response = await fetch(`http://${host}:${port}/`, {
         method: 'GET',
-        signal: controller.signal
+        signal: controller.signal,
+        // Don't use no-cors here because we want to read the response
       });
 
       clearTimeout(timeoutId);
 
+      // If we get here, the server allows CORS or same-origin
       // Check server header
       const serverHeader = response.headers.get('server');
       if (serverHeader) {
@@ -287,19 +335,21 @@ class PortScanner {
       if (contentType.includes('text/html')) {
         const html = await response.text();
         serviceInfo = this.detectFromHtml(html, serviceInfo);
+        serviceInfo.verified = true;
       } else if (contentType.includes('application/json')) {
         serviceInfo.category = 'api';
         serviceInfo.icon = '🔌';
         if (!serviceInfo.framework) {
           serviceInfo.name = 'JSON API';
         }
+        serviceInfo.verified = true;
       }
 
-      serviceInfo.verified = true;
-
     } catch (error) {
-      // Could not fetch details, use known port info only
-      serviceInfo.verified = false;
+      // CORS error or network error - that's okay, we still have known port info
+      // The port is definitely open (we verified that in checkPort)
+      // Just use the known service info
+      console.log(`Could not identify ${host}:${port} - ${error.message}`);
     }
 
     return serviceInfo;

@@ -628,21 +628,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     return card;
   }
-    card.querySelector('.open-btn').addEventListener('click', (e) => {
-      e.stopPropagation();
-      openApp(app.url);
-    });
-
-    card.querySelector('.save-btn').addEventListener('click', (e) => {
-      e.stopPropagation();
-      saveApp(app);
-    });
-
-    // Click card to open
-    card.addEventListener('click', () => openApp(app.url));
-
-    return card;
-  }
 
   function clearScanResults() {
     scanResults.style.display = 'none';

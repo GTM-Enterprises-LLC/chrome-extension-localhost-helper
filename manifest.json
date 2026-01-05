@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "Localhost App Detector",
-  "version": "2.0.0",
-  "description": "Detect localhost apps, Docker containers, scan ports, and save configurations",
+  "version": "2.1.0",
+  "description": "Detect localhost apps, Docker containers, scan ports with app identification, and save configurations",
   "permissions": [
     "tabs",
     "webRequest",
