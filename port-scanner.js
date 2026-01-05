@@ -77,60 +77,17 @@ class PortScanner {
     }
   }
 
-  // Check if a port is accessible
+  // Check if a port is accessible using fetch (works in service workers)
   async checkPort(host, port, timeout = 2000) {
-    return new Promise((resolve) => {
-      const img = new Image();
-      const startTime = Date.now();
-      let resolved = false;
-
-      const cleanup = () => {
-        if (!resolved) {
-          resolved = true;
-          img.src = '';
-        }
-      };
-
-      // Try to load an image from the port
-      img.onload = () => {
-        cleanup();
-        resolve({
-          port,
-          accessible: true,
-          responseTime: Date.now() - startTime
-        });
-      };
-
-      img.onerror = () => {
-        cleanup();
-        // Error means something responded (even if not an image)
-        resolve({
-          port,
-          accessible: true,
-          responseTime: Date.now() - startTime
-        });
-      };
-
-      setTimeout(() => {
-        cleanup();
-        resolve({
-          port,
-          accessible: false,
-          responseTime: null
-        });
-      }, timeout);
-
-      img.src = `http://${host}:${port}/favicon.ico?_=${Date.now()}`;
-    });
-  }
-
-  // Alternative method: Try to fetch
-  async checkPortFetch(host, port, timeout = 2000) {
+    const startTime = Date.now();
+    
     try {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), timeout);
 
-      const response = await fetch(`http://${host}:${port}`, {
+      // Use no-cors mode to check if something is listening
+      // This will succeed if a server responds, even if CORS blocks it
+      await fetch(`http://${host}:${port}/`, {
         method: 'HEAD',
         mode: 'no-cors',
         signal: controller.signal
@@ -141,11 +98,21 @@ class PortScanner {
       return {
         port,
         accessible: true,
-        responseTime: null,
-        status: response.status
+        responseTime: Date.now() - startTime
       };
     } catch (error) {
-      // Network error or timeout
+      // Check if it's an abort (timeout) vs connection refused
+      if (error.name === 'AbortError') {
+        // Timeout - port might be open but slow
+        return {
+          port,
+          accessible: false,
+          responseTime: null,
+          error: 'timeout'
+        };
+      }
+      
+      // Network error - could be connection refused or no server
       return {
         port,
         accessible: false,
