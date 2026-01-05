@@ -581,10 +581,10 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Create enhanced card for scan results
+  // Create condensed card for scan results
   function createScanResultCard(app) {
     const card = document.createElement('div');
-    card.className = 'app-card scan-result';
+    card.className = 'app-card scan-result compact';
     
     // Category-based coloring
     const categoryColors = {
@@ -601,63 +601,33 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     
     const accentColor = categoryColors[app.category] || categoryColors.unknown;
-    card.style.borderLeft = `4px solid ${accentColor}`;
+    card.style.borderLeft = `3px solid ${accentColor}`;
     
-    // Build info display
-    let statusBadge = '';
-    if (app.verified) {
-      statusBadge = '<span class="verified-badge" title="Application identified">✓</span>';
-    }
-    
-    let frameworkBadge = '';
-    if (app.framework) {
-      frameworkBadge = `<span class="framework-badge">${app.framework}</span>`;
-    }
-    
-    let serverInfo = '';
-    if (app.server) {
-      serverInfo = `<span class="server-info" title="Server: ${app.server}">🖥️ ${app.server}</span>`;
-    }
-    
-    let responseInfo = '';
-    if (app.responseTime) {
-      responseInfo = `<span class="response-time">${app.responseTime}ms</span>`;
-    }
+    // Build compact display - show framework if available, otherwise category
+    const label = app.framework || app.name;
+    const displayName = app.title && app.title !== app.name && app.title.length < 25 
+      ? app.title 
+      : label;
 
     card.innerHTML = `
-      <div class="app-icon" style="font-size: 24px;">${app.icon}</div>
-      <div class="app-info">
-        <div class="app-name">
-          ${app.name} ${statusBadge}
-        </div>
-        <div class="app-url">
-          <span class="port-number">:${app.port}</span>
-          ${frameworkBadge}
-          <span class="category-tag">${app.category || 'unknown'}</span>
-        </div>
-        <div class="app-details">
-          ${serverInfo}
-          ${responseInfo}
-          ${app.title && app.title !== app.name ? `<span class="page-title" title="${app.title}">📄 ${app.title.substring(0, 30)}${app.title.length > 30 ? '...' : ''}</span>` : ''}
-        </div>
-      </div>
-      <div class="app-actions">
-        <button class="action-btn open-btn" title="Open in new tab">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
-            <polyline points="15 3 21 3 21 9"/>
-            <line x1="10" y1="14" x2="21" y2="3"/>
-          </svg>
-        </button>
-        <button class="action-btn save-btn" title="Save this app">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
-          </svg>
-        </button>
-      </div>
+      <span class="scan-icon">${app.icon}</span>
+      <span class="scan-port">:${app.port}</span>
+      <span class="scan-name">${displayName}</span>
+      ${app.verified ? '<span class="scan-verified">✓</span>' : ''}
+      ${app.responseTime ? `<span class="scan-time">${app.responseTime}ms</span>` : ''}
+      <button class="scan-open" title="Open">→</button>
     `;
 
-    // Event listeners
+    // Click to open
+    card.addEventListener('click', () => openApp(app.url));
+
+    card.querySelector('.scan-open').addEventListener('click', (e) => {
+      e.stopPropagation();
+      openApp(app.url);
+    });
+
+    return card;
+  }
     card.querySelector('.open-btn').addEventListener('click', (e) => {
       e.stopPropagation();
       openApp(app.url);
