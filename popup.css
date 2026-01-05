@@ -618,6 +618,134 @@ h1 {
   justify-content: center;
 }
 
+/* Scan Result Cards */
+.app-card.scan-result {
+  padding: 12px 16px;
+}
+
+.app-card.scan-result .app-info {
+  flex: 1;
+}
+
+.app-card.scan-result .app-name {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 600;
+  font-size: 14px;
+  color: #2d3748;
+}
+
+.verified-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  background: #48bb78;
+  color: white;
+  border-radius: 50%;
+  font-size: 10px;
+}
+
+.framework-badge {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 10px;
+  font-weight: 600;
+  margin-left: 8px;
+}
+
+.category-tag {
+  background: #edf2f7;
+  color: #718096;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.port-number {
+  font-family: 'SF Mono', Monaco, 'Consolas', monospace;
+  font-weight: 600;
+  color: #667eea;
+  margin-right: 8px;
+}
+
+.app-details {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 4px;
+  font-size: 11px;
+  color: #718096;
+}
+
+.app-details span {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.server-info {
+  background: #f0fff4;
+  color: #276749;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.response-time {
+  background: #ebf8ff;
+  color: #2b6cb0;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.page-title {
+  background: #faf5ff;
+  color: #6b46c1;
+  padding: 2px 6px;
+  border-radius: 4px;
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.app-actions {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.action-btn {
+  background: #f7fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 6px;
+  cursor: pointer;
+  color: #718096;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.action-btn:hover {
+  background: #667eea;
+  border-color: #667eea;
+  color: white;
+  transform: scale(1.05);
+}
+
+.action-btn.save-btn:hover {
+  background: #48bb78;
+  border-color: #48bb78;
+}
+
 /* Footer */
 footer {
   padding: 10px 20px;

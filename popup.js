@@ -565,11 +565,113 @@ document.addEventListener('DOMContentLoaded', () => {
         port: result.port,
         url: result.url,
         lastSeen: result.lastSeen,
-        type: 'scanned'
+        type: 'scanned',
+        // Enhanced service info
+        name: result.name || `Port ${result.port}`,
+        icon: result.icon || '🔌',
+        framework: result.framework,
+        category: result.category,
+        title: result.title,
+        server: result.server,
+        verified: result.verified,
+        responseTime: result.responseTime
       };
-      const card = createAppCard(app, true);
+      const card = createScanResultCard(app);
       scanResultsList.appendChild(card);
     });
+  }
+
+  // Create enhanced card for scan results
+  function createScanResultCard(app) {
+    const card = document.createElement('div');
+    card.className = 'app-card scan-result';
+    
+    // Category-based coloring
+    const categoryColors = {
+      frontend: '#61DAFB',
+      backend: '#68A063',
+      database: '#336791',
+      queue: '#FF6B6B',
+      monitoring: '#E6522C',
+      web: '#4FC08D',
+      api: '#9B59B6',
+      dev: '#F1C40F',
+      container: '#0DB7ED',
+      unknown: '#718096'
+    };
+    
+    const accentColor = categoryColors[app.category] || categoryColors.unknown;
+    card.style.borderLeft = `4px solid ${accentColor}`;
+    
+    // Build info display
+    let statusBadge = '';
+    if (app.verified) {
+      statusBadge = '<span class="verified-badge" title="Application identified">✓</span>';
+    }
+    
+    let frameworkBadge = '';
+    if (app.framework) {
+      frameworkBadge = `<span class="framework-badge">${app.framework}</span>`;
+    }
+    
+    let serverInfo = '';
+    if (app.server) {
+      serverInfo = `<span class="server-info" title="Server: ${app.server}">🖥️ ${app.server}</span>`;
+    }
+    
+    let responseInfo = '';
+    if (app.responseTime) {
+      responseInfo = `<span class="response-time">${app.responseTime}ms</span>`;
+    }
+
+    card.innerHTML = `
+      <div class="app-icon" style="font-size: 24px;">${app.icon}</div>
+      <div class="app-info">
+        <div class="app-name">
+          ${app.name} ${statusBadge}
+        </div>
+        <div class="app-url">
+          <span class="port-number">:${app.port}</span>
+          ${frameworkBadge}
+          <span class="category-tag">${app.category || 'unknown'}</span>
+        </div>
+        <div class="app-details">
+          ${serverInfo}
+          ${responseInfo}
+          ${app.title && app.title !== app.name ? `<span class="page-title" title="${app.title}">📄 ${app.title.substring(0, 30)}${app.title.length > 30 ? '...' : ''}</span>` : ''}
+        </div>
+      </div>
+      <div class="app-actions">
+        <button class="action-btn open-btn" title="Open in new tab">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+            <polyline points="15 3 21 3 21 9"/>
+            <line x1="10" y1="14" x2="21" y2="3"/>
+          </svg>
+        </button>
+        <button class="action-btn save-btn" title="Save this app">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
+          </svg>
+        </button>
+      </div>
+    `;
+
+    // Event listeners
+    card.querySelector('.open-btn').addEventListener('click', (e) => {
+      e.stopPropagation();
+      openApp(app.url);
+    });
+
+    card.querySelector('.save-btn').addEventListener('click', (e) => {
+      e.stopPropagation();
+      saveApp(app);
+    });
+
+    // Click card to open
+    card.addEventListener('click', () => openApp(app.url));
+
+    return card;
   }
 
   function clearScanResults() {
