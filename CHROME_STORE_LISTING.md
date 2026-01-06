@@ -13,14 +13,14 @@ Localhost App Detector
 
 ### Short Description (132 characters max)
 ```
-Detect localhost apps, scan ports, manage Docker containers, and save favorite development URLs. Perfect for web developers!
+Detect localhost apps, scan ports with app identification, and save favorite development URLs. Perfect for web developers!
 ```
 
 ### Detailed Description (16,000 characters max)
 ```
 🚀 LOCALHOST APP DETECTOR - The Ultimate Developer Tool for Local Development
 
-A must-have Chrome extension for web developers who work with multiple localhost applications, Docker containers, and development servers.
+A must-have Chrome extension for web developers who work with multiple localhost applications and development servers.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
@@ -35,7 +35,8 @@ A must-have Chrome extension for web developers who work with multiple localhost
 🔎 POWERFUL PORT SCANNER
 • Quick Scan: Scan ~100 common dev ports in seconds
 • Deep Scan: Comprehensive scan of 400+ ports
-• Covers web servers, databases, message queues, and more
+• Identifies 100+ frameworks and services automatically
+• Correctly identifies macOS Control Center and system services
 • Visual progress bar with real-time feedback
 
 💾 SAVED APPS MANAGER
@@ -45,14 +46,6 @@ A must-have Chrome extension for web developers who work with multiple localhost
 • Search and filter your saved apps
 • Import/Export configurations for team sharing
 • Works in Incognito mode
-
-🐳 DOCKER INTEGRATION
-• Detects all running Docker containers
-• Shows port mappings and container details
-• Recognizes 20+ frameworks (Node, React, Nginx, MySQL, etc.)
-• Start, stop, and pause containers directly
-• View container logs in real-time
-• Updates every 5 seconds
 
 🎨 BEAUTIFUL INTERFACE
 • Modern, clean design with smooth animations
@@ -88,7 +81,6 @@ The extension tracks popular development ports including:
 • Frontend developers (React, Vue, Angular, Svelte)
 • Backend developers (Node.js, Python, PHP, Go)
 • Full-stack developers
-• DevOps engineers working with Docker
 • Anyone running multiple local dev servers
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -137,10 +129,9 @@ English
 | Screenshot | Description |
 |------------|-------------|
 | Screenshot 1 | Main popup showing detected localhost apps with colorful cards |
-| Screenshot 2 | Port Scanner tab with scan results showing open ports |
+| Screenshot 2 | Port Scanner tab with scan results showing open ports and identified services |
 | Screenshot 3 | Saved Apps tab with favorites, tags, and search functionality |
-| Screenshot 4 | Docker integration showing running containers and port mappings |
-| Screenshot 5 | Empty state with quick port chips for launching common ports |
+| Screenshot 4 | Empty state with quick port chips for launching common ports |
 
 ### Promotional Images (Optional but Recommended)
 
@@ -198,9 +189,6 @@ GTM Enterprises LLC
 |------|---------------|
 | `http://localhost/*` | Core functionality - detecting localhost development servers |
 | `http://127.0.0.1/*` | Alternative localhost address detection |
-| `http://host.docker.internal/*` | Docker Desktop hostname resolution |
-| `http://localhost:2375/*` | Docker API communication for container management |
-| `http://127.0.0.1:2375/*` | Alternative Docker API endpoint |
 
 ---
 
@@ -208,7 +196,7 @@ GTM Enterprises LLC
 
 ### Single Purpose Description
 ```
-This extension helps developers discover, track, and quickly access their localhost development servers and Docker containers.
+This extension helps developers discover, track, and quickly access their localhost development servers.
 ```
 
 ### Why These Permissions?
@@ -216,7 +204,7 @@ This extension helps developers discover, track, and quickly access their localh
 tabs: Opens localhost URLs in new tabs when clicked
 webRequest: Detects localhost connections for automatic app discovery
 storage: Saves user preferences and bookmarked apps
-host_permissions: Limited to localhost, 127.0.0.1, and Docker API only
+host_permissions: Limited to localhost and 127.0.0.1 only
 ```
 
 ### Data Usage

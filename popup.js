@@ -10,10 +10,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const emptyState = document.getElementById('emptyState');
   const refreshBtn = document.getElementById('refreshBtn');
   const settingsBtn = document.getElementById('settingsBtn');
-  const dockerToggle = document.getElementById('dockerToggle');
-  const dockerStatus = document.getElementById('dockerStatus');
-  const dockerState = document.getElementById('dockerState');
-  const containerCount = document.getElementById('containerCount');
   const detectedBadge = document.getElementById('detectedBadge');
   
   // Saved Apps Tab Elements
@@ -41,8 +37,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const exportLink = document.getElementById('exportLink');
   const helpLink = document.getElementById('helpLink');
 
-  let dockerEnabled = true;
-  let dockerAvailable = false;
   let currentTab = 'detected';
 
   // Initialize
@@ -66,7 +60,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Detected Apps Tab
     refreshBtn.addEventListener('click', () => loadDetectedApps());
-    dockerToggle.addEventListener('click', toggleDocker);
     
     // Port chips
     document.querySelectorAll('.port-chip').forEach(chip => {
@@ -139,7 +132,6 @@ document.addEventListener('DOMContentLoaded', () => {
     
     chrome.runtime.sendMessage({ action: 'getApps' }, (response) => {
       if (response && response.apps) {
-        updateDockerStatus(response.apps, response.dockerAvailable, response.dockerEnabled);
         displayDetectedApps(response.apps);
         updateDetectedBadge(response.apps.length);
       } else {
@@ -172,12 +164,8 @@ document.addEventListener('DOMContentLoaded', () => {
     emptyState.style.display = 'none';
     appsList.innerHTML = '';
 
-    // Sort: Docker first, then by most recently seen
-    apps.sort((a, b) => {
-      if (a.type === 'docker' && b.type !== 'docker') return -1;
-      if (a.type !== 'docker' && b.type === 'docker') return 1;
-      return (b.lastSeen || 0) - (a.lastSeen || 0);
-    });
+    // Sort by most recently seen
+    apps.sort((a, b) => (b.lastSeen || 0) - (a.lastSeen || 0));
 
     apps.forEach(app => {
       const card = createAppCard(app, true);
@@ -189,13 +177,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const card = document.createElement('div');
     card.className = 'app-card';
     
-    if (app.type === 'docker') {
-      card.classList.add('docker-app');
-    }
-    
     const timeSince = app.lastSeen ? formatTimeSince(app.lastSeen) : 'Just now';
-    const portLabel = app.name || (app.type === 'docker' ? app.name : getPortLabel(app.port));
-    const icon = app.icon || (app.type === 'docker' ? '🐳' : app.port);
+    const portLabel = app.name || getPortLabel(app.port);
+    const icon = app.icon || app.port;
     
     let actionsHTML = '';
     if (showSaveButton) {
@@ -329,48 +313,6 @@ document.addEventListener('DOMContentLoaded', () => {
     } else {
       chrome.runtime.sendMessage({ action: 'openApp', url });
     }
-  }
-
-  function updateDockerStatus(apps, available, enabled) {
-    dockerAvailable = available;
-    dockerEnabled = enabled;
-    
-    if (dockerToggle) {
-      if (enabled) {
-        dockerToggle.classList.add('active');
-        dockerToggle.title = 'Docker detection enabled';
-      } else {
-        dockerToggle.classList.remove('active');
-        dockerToggle.title = 'Docker detection disabled';
-      }
-    }
-
-    if (available && enabled) {
-      dockerStatus.style.display = 'flex';
-      dockerState.textContent = 'Connected';
-      dockerState.style.color = '#48bb78';
-      
-      const dockerApps = apps.filter(app => app.type === 'docker');
-      if (dockerApps.length > 0) {
-        containerCount.textContent = `${dockerApps.length} container${dockerApps.length > 1 ? 's' : ''}`;
-      } else {
-        containerCount.textContent = 'No containers';
-      }
-    } else if (enabled && !available) {
-      dockerStatus.style.display = 'flex';
-      dockerState.textContent = 'Not available';
-      dockerState.style.color = '#f56565';
-      containerCount.textContent = '';
-    } else {
-      dockerStatus.style.display = 'none';
-    }
-  }
-
-  function toggleDocker() {
-    chrome.runtime.sendMessage({ action: 'toggleDocker' }, (response) => {
-      dockerEnabled = response.dockerEnabled;
-      loadDetectedApps();
-    });
   }
 
   function updateDetectedBadge(count) {
@@ -581,7 +523,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Create condensed card for scan results
+  // Create condensed card for scan results with expandable details
   function createScanResultCard(app) {
     const card = document.createElement('div');
     card.className = 'app-card scan-result compact';
@@ -597,6 +539,9 @@ document.addEventListener('DOMContentLoaded', () => {
       api: '#9B59B6',
       dev: '#F1C40F',
       container: '#0DB7ED',
+      system: '#A8A8A8',
+      cache: '#9B59B6',
+      mail: '#3498DB',
       unknown: '#718096'
     };
     
@@ -609,17 +554,75 @@ document.addEventListener('DOMContentLoaded', () => {
       ? app.title 
       : label;
 
+    // Build details array for expanded view
+    const details = [];
+    if (app.serverHeader) details.push(`Server: ${app.serverHeader}`);
+    if (app.serverVersion) details.push(`Version: ${app.serverVersion}`);
+    if (app.poweredBy) details.push(`Powered by: ${app.poweredBy}`);
+    if (app.httpStatus) details.push(`HTTP ${app.httpStatus} ${app.httpStatusText || ''}`);
+    if (app.contentType) details.push(`Content-Type: ${app.contentType.split(';')[0]}`);
+    if (app.framework) details.push(`Framework: ${app.framework}`);
+    if (app.serverType) details.push(`Server Type: ${app.serverType}`);
+    if (app.appVersion) details.push(`App Version: ${app.appVersion}`);
+    if (app.runtime) details.push(`Runtime: ${app.runtime}`);
+    if (app.note) details.push(`Note: ${app.note}`);
+    if (app.identificationError) details.push(`⚠️ ${app.errorMessage}`);
+
+    // Tooltip content
+    const tooltipContent = details.length > 0 ? details.join('\n') : 'No additional details';
+    
+    // For verified system services, show the note as tooltip
+    const verifiedTitle = app.verified && app.note ? ` title="${app.note}"` : '';
+    
+    // Status indicator
+    let statusIndicator = '';
+    if (app.identificationError === 'cors') {
+      statusIndicator = '<span class="scan-cors" title="CORS blocked - limited info">🔒</span>';
+    } else if (app.httpStatus && app.httpStatus >= 200 && app.httpStatus < 300) {
+      statusIndicator = '<span class="scan-ok" title="HTTP OK">●</span>';
+    } else if (app.httpStatus && app.httpStatus >= 400) {
+      statusIndicator = `<span class="scan-error" title="HTTP ${app.httpStatus}">●</span>`;
+    }
+
     card.innerHTML = `
       <span class="scan-icon">${app.icon}</span>
       <span class="scan-port">:${app.port}</span>
-      <span class="scan-name">${displayName}</span>
-      ${app.verified ? '<span class="scan-verified">✓</span>' : ''}
+      <span class="scan-name"${verifiedTitle}>${displayName}</span>
+      ${statusIndicator}
+      ${app.verified ? '<span class="scan-verified" title="Verified">✓</span>' : ''}
       ${app.responseTime ? `<span class="scan-time">${app.responseTime}ms</span>` : ''}
+      <button class="scan-details" title="Show details">ℹ️</button>
       <button class="scan-open" title="Open">→</button>
     `;
+    
+    // Add expandable details section
+    const detailsDiv = document.createElement('div');
+    detailsDiv.className = 'scan-details-panel';
+    detailsDiv.style.display = 'none';
+    detailsDiv.innerHTML = `
+      <div class="details-content">
+        ${details.length > 0 ? details.map(d => `<div class="detail-row">${escapeHtml(d)}</div>`).join('') : '<div class="detail-row">No additional details available</div>'}
+        <div class="detail-row"><strong>URL:</strong> <a href="${app.url}" target="_blank">${app.url}</a></div>
+        <div class="detail-row"><strong>Category:</strong> ${app.category}</div>
+      </div>
+    `;
+    card.appendChild(detailsDiv);
 
     // Click to open
-    card.addEventListener('click', () => openApp(app.url));
+    card.addEventListener('click', (e) => {
+      if (!e.target.classList.contains('scan-details') && !e.target.classList.contains('scan-open')) {
+        openApp(app.url);
+      }
+    });
+    
+    // Details button toggles panel
+    card.querySelector('.scan-details').addEventListener('click', (e) => {
+      e.stopPropagation();
+      const panel = card.querySelector('.scan-details-panel');
+      const isHidden = panel.style.display === 'none';
+      panel.style.display = isHidden ? 'block' : 'none';
+      card.classList.toggle('expanded', isHidden);
+    });
 
     card.querySelector('.scan-open').addEventListener('click', (e) => {
       e.stopPropagation();
@@ -627,6 +630,13 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     return card;
+  }
+  
+  // Helper to escape HTML
+  function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
   }
 
   function clearScanResults() {

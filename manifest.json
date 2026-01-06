@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "Localhost App Detector",
-  "version": "2.1.0",
-  "description": "Detect localhost apps, Docker containers, scan ports with app identification, and save configurations",
+  "version": "3.1.0",
+  "description": "Detect localhost apps, scan ports with intelligent server identification, and save configurations",
   "permissions": [
     "tabs",
     "webRequest",
@@ -10,10 +10,7 @@
   ],
   "host_permissions": [
     "http://localhost/*",
-    "http://127.0.0.1/*",
-    "http://host.docker.internal/*",
-    "http://localhost:2375/*",
-    "http://127.0.0.1:2375/*"
+    "http://127.0.0.1/*"
   ],
   "background": {
     "service_worker": "background.js"

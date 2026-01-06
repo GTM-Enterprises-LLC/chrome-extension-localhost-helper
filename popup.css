@@ -69,48 +69,6 @@ h1 {
   transform: scale(0.95);
 }
 
-.docker-btn.active {
-  background: rgba(255, 255, 255, 0.3);
-  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.4);
-}
-
-/* Docker Status */
-.docker-status {
-  background: #f7fafc;
-  border-bottom: 1px solid #e2e8f0;
-  padding: 10px 20px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  font-size: 13px;
-}
-
-.status-content {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  color: #4a5568;
-}
-
-.docker-icon {
-  font-size: 16px;
-}
-
-.status-text strong {
-  color: #2d3748;
-}
-
-.container-count {
-  margin-left: auto;
-  padding: 3px 10px;
-  background: white;
-  border-radius: 12px;
-  font-size: 11px;
-  font-weight: 600;
-  color: #667eea;
-  border: 1px solid #e2e8f0;
-}
-
 /* Tabs */
 .tabs {
   display: flex;
@@ -229,19 +187,6 @@ h1 {
   border-color: #667eea;
   box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
   transform: translateY(-2px);
-}
-
-.app-card.docker-app {
-  border-left: 4px solid #2496ED;
-}
-
-.app-card.docker-app::before {
-  content: '🐳';
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  font-size: 18px;
-  opacity: 0.3;
 }
 
 .app-header {
@@ -695,6 +640,80 @@ h1 {
 .scan-open:hover {
   background: #667eea;
   color: white;
+}
+
+/* Scan Details Button */
+.scan-details {
+  background: none;
+  border: none;
+  color: #a0aec0;
+  font-size: 12px;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  transition: all 0.15s;
+  flex-shrink: 0;
+}
+
+.scan-details:hover {
+  background: #e2e8f0;
+  color: #667eea;
+}
+
+/* Status Indicators */
+.scan-ok {
+  color: #48bb78;
+  font-size: 8px;
+}
+
+.scan-error {
+  color: #e53e3e;
+  font-size: 8px;
+}
+
+.scan-cors {
+  font-size: 10px;
+  opacity: 0.7;
+}
+
+/* Expandable Details Panel */
+.scan-details-panel {
+  margin-top: 8px;
+  padding: 10px;
+  background: #f7fafc;
+  border-radius: 6px;
+  border-left: 3px solid #667eea;
+  font-size: 11px;
+}
+
+.app-card.scan-result.compact.expanded {
+  flex-wrap: wrap;
+}
+
+.details-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 100%;
+}
+
+.detail-row {
+  color: #4a5568;
+  line-height: 1.4;
+  word-break: break-word;
+}
+
+.detail-row a {
+  color: #667eea;
+  text-decoration: none;
+}
+
+.detail-row a:hover {
+  text-decoration: underline;
+}
+
+.detail-row strong {
+  color: #2d3748;
 }
 
 /* Footer */

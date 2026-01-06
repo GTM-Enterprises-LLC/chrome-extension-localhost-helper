@@ -1,38 +1,19 @@
-// Background service worker for tracking localhost applications with Docker support
-importScripts('docker-manager.js');
+// Background service worker for tracking localhost applications
 importScripts('port-scanner.js');
 importScripts('saved-apps-manager.js');
 
 let localhostApps = new Map();
-let dockerDetector = null;
 let portScanner = null;
 let savedAppsManager = null;
-let dockerEnabled = true;
 
-// Initialize Docker detector
-async function initDockerDetector() {
-  dockerDetector = new DockerManager();
+// Initialize managers
+async function initManagers() {
   portScanner = new PortScanner();
   savedAppsManager = new SavedAppsManager();
-  
-  // Load user settings
-  const settings = await chrome.storage.local.get(['dockerEnabled']);
-  dockerEnabled = settings.dockerEnabled !== false; // Default to true
-  
-  if (dockerEnabled) {
-    const isAvailable = await dockerDetector.checkDockerAvailability();
-    
-    if (isAvailable) {
-      console.log('Docker daemon detected, starting monitoring...');
-      dockerDetector.startPolling(5000);
-    } else {
-      console.log('Docker daemon not available via API');
-    }
-  }
 }
 
 // Initialize on extension load
-initDockerDetector();
+initManagers();
 
 // Common development ports to check
 const commonPorts = [
@@ -68,13 +49,12 @@ chrome.webRequest.onBeforeRequest.addListener(
       "http://localhost/*",
       "http://127.0.0.1/*",
       "https://localhost/*",
-      "https://127.0.0.1/*",
-      "http://host.docker.internal/*"
+      "https://127.0.0.1/*"
     ]
   }
 );
 
-// Merge localhost and Docker apps
+// Get all apps
 function getAllApps() {
   const now = Date.now();
   const apps = [];
@@ -88,19 +68,11 @@ function getAllApps() {
     }
   }
   
-  // Add Docker apps if enabled
-  if (dockerEnabled && dockerDetector && dockerDetector.isDockerAvailable) {
-    const dockerApps = dockerDetector.getDockerApps();
-    apps.push(...dockerApps);
-  }
-  
   return apps;
 }
 
 // Scan for active localhost applications
 async function scanForApps() {
-  const results = [];
-  
   for (const port of commonPorts) {
     try {
       for (const host of ['localhost', '127.0.0.1']) {
@@ -127,8 +99,6 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     scanForApps().then(apps => {
       sendResponse({ 
         apps,
-        dockerAvailable: dockerDetector?.isDockerAvailable || false,
-        dockerEnabled: dockerEnabled,
         savedApps: savedAppsManager?.getSavedApps() || []
       });
     });
@@ -147,44 +117,6 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.action === 'clearCache') {
     localhostApps.clear();
     sendResponse({ success: true });
-  }
-  
-  if (request.action === 'toggleDocker') {
-    dockerEnabled = !dockerEnabled;
-    chrome.storage.local.set({ dockerEnabled });
-    
-    if (dockerEnabled && dockerDetector) {
-      dockerDetector.startPolling(5000);
-    } else if (dockerDetector) {
-      dockerDetector.stopPolling();
-    }
-    
-    sendResponse({ dockerEnabled });
-  }
-  
-  if (request.action === 'getDockerStats') {
-    const stats = dockerDetector ? dockerDetector.getStats() : null;
-    sendResponse({ stats });
-  }
-  
-  if (request.action === 'refreshDocker') {
-    if (dockerDetector && dockerEnabled) {
-      dockerDetector.processContainers().then(apps => {
-        sendResponse({ apps });
-      });
-      return true;
-    }
-    sendResponse({ apps: [] });
-  }
-  
-  if (request.action === 'getContainerDetails') {
-    if (dockerDetector && dockerEnabled) {
-      dockerDetector.getContainerDetails(request.containerId).then(details => {
-        sendResponse({ details });
-      });
-      return true;
-    }
-    sendResponse({ details: null });
   }
   
   // Port Scanner actions
@@ -322,7 +254,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     }
     sendResponse({ success: false });
   }
-  
+
   if (request.action === 'getAllTags') {
     const tags = savedAppsManager ? savedAppsManager.getAllTags() : [];
     sendResponse({ tags });
@@ -339,14 +271,4 @@ setInterval(() => {
   }
 }, 60000);
 
-// Handle extension installation
-chrome.runtime.onInstalled.addListener(async (details) => {
-  if (details.reason === 'install') {
-    // Set default settings
-    await chrome.storage.local.set({ 
-      dockerEnabled: true 
-    });
-  }
-});
-
-console.log('Localhost App Detector with Docker support initialized');
+console.log('Localhost App Detector initialized');

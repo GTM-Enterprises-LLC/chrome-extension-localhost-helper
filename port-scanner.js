@@ -35,9 +35,12 @@ class PortScanner {
       // Vue
       8080: { name: 'Vue CLI', category: 'frontend', icon: '💚', framework: 'Vue' },
       
+      // macOS System (verified)
+      5000: { name: 'Control Center', category: 'system', icon: '🍎', framework: 'macOS', verified: true, note: 'macOS AirPlay Receiver' },
+      
       // Svelte
-      5000: { name: 'Svelte / Flask', category: 'frontend', icon: '🧡', framework: 'Svelte' },
       5001: { name: 'Svelte / Flask', category: 'frontend', icon: '🧡' },
+      5173: { name: 'Vite (Svelte)', category: 'frontend', icon: '🧡', framework: 'Svelte' },
       
       // Python backends
       8000: { name: 'Django / FastAPI', category: 'backend', icon: '🐍', framework: 'Python' },
@@ -299,7 +302,8 @@ class PortScanner {
       framework: knownService?.framework || null,
       title: null,
       server: null,
-      verified: !!knownService // Mark as verified if we know this port
+      note: knownService?.note || null,
+      verified: knownService?.verified || false // Only mark verified if explicitly set in knownPorts
     };
 
     try {
@@ -316,6 +320,10 @@ class PortScanner {
 
       clearTimeout(timeoutId);
 
+      // Store response status for display
+      serviceInfo.httpStatus = response.status;
+      serviceInfo.httpStatusText = response.statusText;
+
       // If we get here, the server allows CORS or same-origin
       // Check server header
       const serverHeader = response.headers.get('server');
@@ -327,11 +335,33 @@ class PortScanner {
       // Check other identifying headers
       const poweredBy = response.headers.get('x-powered-by');
       if (poweredBy) {
+        serviceInfo.poweredBy = poweredBy;
         serviceInfo = this.detectFromPoweredBy(poweredBy, serviceInfo);
       }
+      
+      // Check additional headers for more info
+      const via = response.headers.get('via');
+      if (via) serviceInfo.via = via;
+      
+      const contentType = response.headers.get('content-type') || '';
+      serviceInfo.contentType = contentType;
+      
+      const xFramework = response.headers.get('x-framework');
+      if (xFramework) serviceInfo.xFramework = xFramework;
+      
+      const xGeneratedBy = response.headers.get('x-generated-by');
+      if (xGeneratedBy) serviceInfo.xGeneratedBy = xGeneratedBy;
+      
+      const xRuntime = response.headers.get('x-runtime');
+      if (xRuntime) serviceInfo.runtime = xRuntime;
+      
+      const xRequestId = response.headers.get('x-request-id');
+      if (xRequestId) serviceInfo.hasRequestId = true;
+      
+      const xVersion = response.headers.get('x-version') || response.headers.get('x-app-version');
+      if (xVersion) serviceInfo.appVersion = xVersion;
 
       // Try to get the HTML and analyze it
-      const contentType = response.headers.get('content-type') || '';
       if (contentType.includes('text/html')) {
         const html = await response.text();
         serviceInfo = this.detectFromHtml(html, serviceInfo);
@@ -348,7 +378,20 @@ class PortScanner {
     } catch (error) {
       // CORS error or network error - that's okay, we still have known port info
       // The port is definitely open (we verified that in checkPort)
-      // Just use the known service info
+      // Categorize the error for display
+      if (error.name === 'TypeError' && error.message.includes('CORS')) {
+        serviceInfo.identificationError = 'cors';
+        serviceInfo.errorMessage = 'CORS blocked';
+      } else if (error.name === 'TypeError' && error.message.includes('Failed to fetch')) {
+        serviceInfo.identificationError = 'network';
+        serviceInfo.errorMessage = 'Network error';
+      } else if (error.name === 'AbortError') {
+        serviceInfo.identificationError = 'timeout';
+        serviceInfo.errorMessage = 'Request timeout';
+      } else {
+        serviceInfo.identificationError = 'unknown';
+        serviceInfo.errorMessage = error.message || 'Unknown error';
+      }
       console.log(`Could not identify ${host}:${port} - ${error.message}`);
     }
 
@@ -359,36 +402,262 @@ class PortScanner {
   detectFromServerHeader(server, info) {
     const serverLower = server.toLowerCase();
     
+    // Store raw server header for display
+    info.serverHeader = server;
+    
+    // Web servers
     if (serverLower.includes('nginx')) {
       info.name = 'Nginx';
       info.icon = '🌐';
       info.category = 'web';
+      info.serverType = 'nginx';
+      // Extract version if present
+      const versionMatch = server.match(/nginx\/([\d.]+)/i);
+      if (versionMatch) info.serverVersion = versionMatch[1];
     } else if (serverLower.includes('apache')) {
       info.name = 'Apache';
       info.icon = '🪶';
       info.category = 'web';
-    } else if (serverLower.includes('express')) {
-      info.name = 'Express.js';
-      info.icon = '🟢';
-      info.framework = 'Express';
-      info.category = 'backend';
-    } else if (serverLower.includes('uvicorn') || serverLower.includes('gunicorn')) {
-      info.name = 'Python ASGI/WSGI';
-      info.icon = '🐍';
-      info.category = 'backend';
-    } else if (serverLower.includes('werkzeug')) {
-      info.name = 'Flask';
-      info.icon = '🐍';
-      info.framework = 'Flask';
-      info.category = 'backend';
-    } else if (serverLower.includes('kestrel')) {
-      info.name = '.NET Kestrel';
-      info.icon = '🟣';
-      info.category = 'backend';
+      info.serverType = 'apache';
+      const versionMatch = server.match(/apache\/([\d.]+)/i);
+      if (versionMatch) info.serverVersion = versionMatch[1];
+    } else if (serverLower.includes('openresty')) {
+      info.name = 'OpenResty';
+      info.icon = '🌐';
+      info.category = 'web';
+      info.serverType = 'openresty';
+    } else if (serverLower.includes('lighttpd')) {
+      info.name = 'Lighttpd';
+      info.icon = '🌐';
+      info.category = 'web';
+      info.serverType = 'lighttpd';
+    } else if (serverLower.includes('litespeed')) {
+      info.name = 'LiteSpeed';
+      info.icon = '🌐';
+      info.category = 'web';
+      info.serverType = 'litespeed';
+    } else if (serverLower.includes('iis') || serverLower.includes('microsoft')) {
+      info.name = 'IIS';
+      info.icon = '🟦';
+      info.category = 'web';
+      info.serverType = 'iis';
     } else if (serverLower.includes('caddy')) {
       info.name = 'Caddy';
       info.icon = '🎾';
       info.category = 'web';
+      info.serverType = 'caddy';
+    } else if (serverLower.includes('traefik')) {
+      info.name = 'Traefik';
+      info.icon = '🚦';
+      info.category = 'web';
+      info.serverType = 'traefik';
+    } else if (serverLower.includes('haproxy')) {
+      info.name = 'HAProxy';
+      info.icon = '🔀';
+      info.category = 'web';
+      info.serverType = 'haproxy';
+    } else if (serverLower.includes('envoy')) {
+      info.name = 'Envoy';
+      info.icon = '🔀';
+      info.category = 'web';
+      info.serverType = 'envoy';
+    }
+    // Node.js servers
+    else if (serverLower.includes('express')) {
+      info.name = 'Express.js';
+      info.icon = '🟢';
+      info.framework = 'Express';
+      info.category = 'backend';
+      info.serverType = 'express';
+    } else if (serverLower.includes('hapi')) {
+      info.name = 'Hapi.js';
+      info.icon = '🟢';
+      info.framework = 'Hapi';
+      info.category = 'backend';
+      info.serverType = 'hapi';
+    } else if (serverLower.includes('fastify')) {
+      info.name = 'Fastify';
+      info.icon = '🟢';
+      info.framework = 'Fastify';
+      info.category = 'backend';
+      info.serverType = 'fastify';
+    } else if (serverLower.includes('koa')) {
+      info.name = 'Koa';
+      info.icon = '🟢';
+      info.framework = 'Koa';
+      info.category = 'backend';
+      info.serverType = 'koa';
+    }
+    // Python servers
+    else if (serverLower.includes('uvicorn')) {
+      info.name = 'Uvicorn';
+      info.icon = '🐍';
+      info.framework = 'ASGI';
+      info.category = 'backend';
+      info.serverType = 'uvicorn';
+    } else if (serverLower.includes('gunicorn')) {
+      info.name = 'Gunicorn';
+      info.icon = '🐍';
+      info.framework = 'WSGI';
+      info.category = 'backend';
+      info.serverType = 'gunicorn';
+    } else if (serverLower.includes('werkzeug')) {
+      info.name = 'Flask (Werkzeug)';
+      info.icon = '🐍';
+      info.framework = 'Flask';
+      info.category = 'backend';
+      info.serverType = 'werkzeug';
+    } else if (serverLower.includes('hypercorn')) {
+      info.name = 'Hypercorn';
+      info.icon = '🐍';
+      info.framework = 'ASGI';
+      info.category = 'backend';
+      info.serverType = 'hypercorn';
+    } else if (serverLower.includes('daphne')) {
+      info.name = 'Daphne';
+      info.icon = '🐍';
+      info.framework = 'Django Channels';
+      info.category = 'backend';
+      info.serverType = 'daphne';
+    } else if (serverLower.includes('tornado')) {
+      info.name = 'Tornado';
+      info.icon = '🐍';
+      info.framework = 'Tornado';
+      info.category = 'backend';
+      info.serverType = 'tornado';
+    } else if (serverLower.includes('waitress')) {
+      info.name = 'Waitress';
+      info.icon = '🐍';
+      info.framework = 'WSGI';
+      info.category = 'backend';
+      info.serverType = 'waitress';
+    }
+    // Ruby servers
+    else if (serverLower.includes('puma')) {
+      info.name = 'Puma';
+      info.icon = '💎';
+      info.framework = 'Rails';
+      info.category = 'backend';
+      info.serverType = 'puma';
+    } else if (serverLower.includes('unicorn')) {
+      info.name = 'Unicorn';
+      info.icon = '💎';
+      info.framework = 'Rails';
+      info.category = 'backend';
+      info.serverType = 'unicorn';
+    } else if (serverLower.includes('webrick')) {
+      info.name = 'WEBrick';
+      info.icon = '💎';
+      info.framework = 'Ruby';
+      info.category = 'backend';
+      info.serverType = 'webrick';
+    } else if (serverLower.includes('thin')) {
+      info.name = 'Thin';
+      info.icon = '💎';
+      info.framework = 'Ruby';
+      info.category = 'backend';
+      info.serverType = 'thin';
+    }
+    // Java/JVM servers
+    else if (serverLower.includes('tomcat')) {
+      info.name = 'Apache Tomcat';
+      info.icon = '☕';
+      info.framework = 'Java';
+      info.category = 'backend';
+      info.serverType = 'tomcat';
+    } else if (serverLower.includes('jetty')) {
+      info.name = 'Jetty';
+      info.icon = '☕';
+      info.framework = 'Java';
+      info.category = 'backend';
+      info.serverType = 'jetty';
+    } else if (serverLower.includes('undertow')) {
+      info.name = 'Undertow';
+      info.icon = '☕';
+      info.framework = 'Java';
+      info.category = 'backend';
+      info.serverType = 'undertow';
+    } else if (serverLower.includes('wildfly') || serverLower.includes('jboss')) {
+      info.name = 'WildFly/JBoss';
+      info.icon = '☕';
+      info.framework = 'Java EE';
+      info.category = 'backend';
+      info.serverType = 'wildfly';
+    } else if (serverLower.includes('netty')) {
+      info.name = 'Netty';
+      info.icon = '☕';
+      info.framework = 'Java';
+      info.category = 'backend';
+      info.serverType = 'netty';
+    }
+    // .NET servers
+    else if (serverLower.includes('kestrel')) {
+      info.name = '.NET Kestrel';
+      info.icon = '🟣';
+      info.framework = '.NET';
+      info.category = 'backend';
+      info.serverType = 'kestrel';
+    }
+    // Go servers
+    else if (serverLower.includes('go') || serverLower.includes('golang')) {
+      info.name = 'Go Server';
+      info.icon = '🐹';
+      info.framework = 'Go';
+      info.category = 'backend';
+      info.serverType = 'go';
+    } else if (serverLower.includes('gin')) {
+      info.name = 'Gin';
+      info.icon = '🐹';
+      info.framework = 'Gin';
+      info.category = 'backend';
+      info.serverType = 'gin';
+    } else if (serverLower.includes('fiber')) {
+      info.name = 'Fiber';
+      info.icon = '🐹';
+      info.framework = 'Fiber';
+      info.category = 'backend';
+      info.serverType = 'fiber';
+    } else if (serverLower.includes('echo')) {
+      info.name = 'Echo';
+      info.icon = '🐹';
+      info.framework = 'Echo';
+      info.category = 'backend';
+      info.serverType = 'echo';
+    }
+    // Rust servers
+    else if (serverLower.includes('actix')) {
+      info.name = 'Actix';
+      info.icon = '🦀';
+      info.framework = 'Actix';
+      info.category = 'backend';
+      info.serverType = 'actix';
+    } else if (serverLower.includes('rocket')) {
+      info.name = 'Rocket';
+      info.icon = '🦀';
+      info.framework = 'Rocket';
+      info.category = 'backend';
+      info.serverType = 'rocket';
+    } else if (serverLower.includes('axum')) {
+      info.name = 'Axum';
+      info.icon = '🦀';
+      info.framework = 'Axum';
+      info.category = 'backend';
+      info.serverType = 'axum';
+    }
+    // PHP servers
+    else if (serverLower.includes('php')) {
+      info.name = 'PHP';
+      info.icon = '🐘';
+      info.framework = 'PHP';
+      info.category = 'backend';
+      info.serverType = 'php';
+    }
+    // Cloudflare/CDN
+    else if (serverLower.includes('cloudflare')) {
+      info.name = 'Cloudflare';
+      info.icon = '☁️';
+      info.category = 'web';
+      info.serverType = 'cloudflare';
     }
     
     return info;
