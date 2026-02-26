@@ -736,6 +736,266 @@ footer {
   text-decoration: underline;
 }
 
+/* Saved Stats Bar */
+.saved-stats {
+  display: flex;
+  gap: 12px;
+  padding: 6px 16px;
+  background: #f7fafc;
+  border-bottom: 1px solid #e2e8f0;
+  font-size: 11px;
+  color: #718096;
+  font-weight: 500;
+}
+
+.saved-stats span {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Tags */
+.app-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid #f0f0f0;
+  align-items: center;
+}
+
+.tag-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 2px 7px;
+  background: #edf2f7;
+  color: #4a5568;
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.tag-remove {
+  background: none;
+  border: none;
+  color: #a0aec0;
+  cursor: pointer;
+  font-size: 13px;
+  line-height: 1;
+  padding: 0 1px;
+  display: flex;
+  align-items: center;
+}
+
+.tag-remove:hover {
+  color: #e53e3e;
+}
+
+.tag-add-btn {
+  background: none;
+  border: 1px dashed #cbd5e0;
+  color: #a0aec0;
+  border-radius: 10px;
+  font-size: 10px;
+  padding: 2px 7px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.tag-add-btn:hover {
+  border-color: #667eea;
+  color: #667eea;
+}
+
+.tag-input-row {
+  display: flex;
+  gap: 4px;
+  width: 100%;
+  margin-top: 4px;
+}
+
+.tag-input {
+  flex: 1;
+  padding: 4px 8px;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  font-size: 12px;
+  font-family: inherit;
+}
+
+.tag-input:focus {
+  outline: none;
+  border-color: #667eea;
+}
+
+.tag-confirm {
+  padding: 4px 10px;
+  background: #667eea;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.tag-confirm:hover {
+  background: #5568d3;
+}
+
+/* Scan save button */
+.scan-save {
+  background: none;
+  border: none;
+  color: #a0aec0;
+  font-size: 13px;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  transition: all 0.15s;
+  flex-shrink: 0;
+}
+
+.scan-save:hover {
+  background: #edf2f7;
+  color: #667eea;
+}
+
+/* Settings Modal */
+.settings-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.settings-panel {
+  background: white;
+  border-radius: 10px;
+  width: 340px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+}
+
+.settings-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.settings-header h2 {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.settings-close {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: white;
+  font-size: 18px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  transition: background 0.15s;
+}
+
+.settings-close:hover {
+  background: rgba(255, 255, 255, 0.35);
+}
+
+.settings-body {
+  padding: 8px 0;
+}
+
+.setting-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 20px;
+  border-bottom: 1px solid #f7fafc;
+}
+
+.setting-row:last-child {
+  border-bottom: none;
+}
+
+.setting-label span {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  color: #2d3748;
+}
+
+.setting-label small {
+  display: block;
+  font-size: 11px;
+  color: #a0aec0;
+  margin-top: 2px;
+}
+
+/* Toggle switch */
+.toggle {
+  position: relative;
+  display: inline-flex;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.toggle input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+  position: absolute;
+}
+
+.toggle-track {
+  width: 36px;
+  height: 20px;
+  background: #cbd5e0;
+  border-radius: 10px;
+  transition: background 0.2s;
+  position: relative;
+}
+
+.toggle-track::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 16px;
+  height: 16px;
+  background: white;
+  border-radius: 50%;
+  transition: transform 0.2s;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+
+.toggle input:checked + .toggle-track {
+  background: #667eea;
+}
+
+.toggle input:checked + .toggle-track::after {
+  transform: translateX(16px);
+}
+
+.settings-footer {
+  padding: 14px 20px;
+  background: #f7fafc;
+  border-top: 1px solid #e2e8f0;
+}
+
 /* Scrollbar */
 .apps-list::-webkit-scrollbar,
 .tab-content::-webkit-scrollbar {

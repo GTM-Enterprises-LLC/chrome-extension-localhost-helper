@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(zip -r localhost-app-detector.zip manifest.json popup.html popup.css popup.js background.js port-scanner.js saved-apps-manager.js icons/icon16.png icons/icon48.png icons/icon128.png)",
+      "Bash(unzip -l localhost-app-detector.zip)"
+    ]
+  }
+}

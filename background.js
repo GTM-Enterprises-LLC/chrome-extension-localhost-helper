@@ -259,6 +259,16 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     const tags = savedAppsManager ? savedAppsManager.getAllTags() : [];
     sendResponse({ tags });
   }
+
+  if (request.action === 'removeTag') {
+    if (savedAppsManager) {
+      savedAppsManager.removeTag(request.appId, request.tag).then(() => {
+        sendResponse({ success: true });
+      });
+      return true;
+    }
+    sendResponse({ success: false });
+  }
 });
 
 // Periodically clean up old entries

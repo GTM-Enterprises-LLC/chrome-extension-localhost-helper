@@ -103,8 +103,8 @@ Each scan result provides expandable details including:
 
 1. **Download or Clone** this repository
    ```bash
-   git clone https://github.com/yourusername/localhost-detector.git
-   cd localhost-detector
+   git clone https://github.com/GTM-Enterprises-LLC/chrome-extension-localhost-helper.git
+   cd chrome-extension-localhost-helper
    ```
 
 2. **Open Chrome Extensions Page**

@@ -42,6 +42,9 @@
 
     <!-- Detected Apps Tab -->
     <div id="tab-detected" class="tab-content active">
+      <div class="search-bar">
+        <input type="text" id="detectedSearchInput" placeholder="Filter detected apps...">
+      </div>
       <div id="loading" class="loading">
         <div class="spinner"></div>
         <p>Scanning for localhost applications...</p>
@@ -74,7 +77,11 @@
       <div class="search-bar">
         <input type="text" id="savedSearchInput" placeholder="Search saved apps...">
       </div>
-      
+      <div id="savedStats" class="saved-stats" style="display:none;">
+        <span id="statTotal"></span>
+        <span id="statFavorites"></span>
+      </div>
+
       <div id="savedAppsList" class="apps-list"></div>
       
       <div id="savedEmptyState" class="empty-state">
@@ -146,6 +153,41 @@
         <small>Apps auto-expire after 5 minutes • <a href="#" id="exportLink">Export</a> • <a href="#" id="helpLink">Help</a></small>
       </div>
     </footer>
+  </div>
+
+  <!-- Settings Modal -->
+  <div id="settingsOverlay" class="settings-overlay" style="display:none;">
+    <div class="settings-panel">
+      <div class="settings-header">
+        <h2>Settings</h2>
+        <button id="settingsCloseBtn" class="settings-close">×</button>
+      </div>
+      <div class="settings-body">
+        <div class="setting-row">
+          <div class="setting-label">
+            <span>Auto-scan on open</span>
+            <small>Automatically scan ports when popup opens</small>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" id="settingAutoScan">
+            <span class="toggle-track"></span>
+          </label>
+        </div>
+        <div class="setting-row">
+          <div class="setting-label">
+            <span>Quick scan by default</span>
+            <small>~100 common ports instead of 400+ deep scan</small>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" id="settingQuickScan">
+            <span class="toggle-track"></span>
+          </label>
+        </div>
+      </div>
+      <div class="settings-footer">
+        <button id="settingsSaveBtn" class="primary-btn">Save Settings</button>
+      </div>
+    </div>
   </div>
 
   <!-- Hidden file inputs -->
