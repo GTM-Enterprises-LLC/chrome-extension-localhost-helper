@@ -2,7 +2,19 @@
   "permissions": {
     "allow": [
       "Bash(zip -r localhost-app-detector.zip manifest.json popup.html popup.css popup.js background.js port-scanner.js saved-apps-manager.js icons/icon16.png icons/icon48.png icons/icon128.png)",
-      "Bash(unzip -l localhost-app-detector.zip)"
+      "Bash(unzip -l localhost-app-detector.zip)",
+      "Bash(sips -g pixelWidth -g pixelHeight /Users/steve/Code/Projects/GTM-Enterprises-LLC/chrome-extension-localhost-helper/95f01a82-123c-4fba-bf40-44eb8077ba6e.png)",
+      "Bash(sips -z 128 128 95f01a82-123c-4fba-bf40-44eb8077ba6e.png --out icons/icon128.png)",
+      "Bash(sips -z 48 48 95f01a82-123c-4fba-bf40-44eb8077ba6e.png --out icons/icon48.png)",
+      "Bash(sips -z 16 16 95f01a82-123c-4fba-bf40-44eb8077ba6e.png --out icons/icon16.png)",
+      "Bash(ls -lh icons/*.png)",
+      "Bash(magick 95f01a82-123c-4fba-bf40-44eb8077ba6e.png -trim -fuzz 5% -format \"%wx%h \\(originally 1024x1024\\)\" info:)",
+      "Bash(magick 95f01a82-123c-4fba-bf40-44eb8077ba6e.png -trim -fuzz 5% -gravity center -extent 1024x1024 /tmp/icon-trimmed.png)",
+      "Bash(sips -g pixelWidth -g pixelHeight /tmp/icon-trimmed.png)",
+      "Bash(sips -z 128 128 /tmp/icon-trimmed.png --out icons/icon128.png)",
+      "Bash(sips -z 48 48 /tmp/icon-trimmed.png --out icons/icon48.png)",
+      "Bash(sips -z 16 16 /tmp/icon-trimmed.png --out icons/icon16.png)",
+      "Bash(magick 95f01a82-123c-4fba-bf40-44eb8077ba6e.png -trim -fuzz 5% -format \"%wx%h\" info:)"
     ]
   }
 }

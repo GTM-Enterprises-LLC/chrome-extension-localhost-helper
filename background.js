@@ -50,7 +50,8 @@ chrome.webRequest.onBeforeRequest.addListener(
       "http://127.0.0.1/*",
       "https://localhost/*",
       "https://127.0.0.1/*"
-    ]
+    ],
+    types: ["main_frame", "sub_frame"]
   }
 );
 
